@@ -21,7 +21,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             InterestCalculatorTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     CalculatorApp()
                 }
             }
@@ -29,16 +32,25 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+// add error text
+// colse keyboard when calculate cliked
+// add success confetti animation
 @Composable
 fun CalculatorApp() {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Simple Interest", "Compound Interest")
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Text("Interest Calculator", fontSize = 28.sp, modifier = Modifier.padding(bottom = 8.dp))
 
-        TabRow(selectedTabIndex = selectedTab, containerColor = MaterialTheme.colorScheme.primaryContainer) {
+        TabRow(
+            selectedTabIndex = selectedTab,
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTab == index,
@@ -57,13 +69,14 @@ fun CalculatorApp() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SimpleInterestCalculator() {
     var principal by remember { mutableStateOf("") }
-    var rate by remember { mutableStateOf("") }
+    var rate by remember { mutableStateOf("10") }
     var time by remember { mutableStateOf("") }
     var result by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+    var error by remember { mutableStateOf(false) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         OutlinedTextField(
@@ -71,7 +84,13 @@ fun SimpleInterestCalculator() {
             onValueChange = { principal = it },
             label = { Text("Principal (₹)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            supportingText = {
+                if (error && principal.isBlank()) Text("Enter the principal amount",color = MaterialTheme.colorScheme.error)
+            },
+            isError = if (principal.isBlank()) error else false
         )
 
         OutlinedTextField(
@@ -79,7 +98,13 @@ fun SimpleInterestCalculator() {
             onValueChange = { time = it },
             label = { Text("Time (years)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            supportingText = {
+                if (error && time.isBlank()) Text("Enter the time",color = MaterialTheme.colorScheme.error)
+            },
+            isError = if (time.isBlank()) error else false
         )
 
         OutlinedTextField(
@@ -87,24 +112,49 @@ fun SimpleInterestCalculator() {
             onValueChange = { rate = it },
             label = { Text("Rate (%)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            supportingText = {
+                if (error && rate.isBlank()) Text("Enter the rate",color = MaterialTheme.colorScheme.error)
+            },
+            isError = if (rate.isBlank()) error else false
         )
 
+        Slider(
+            value = rate.toFloatOrNull() ?: 0f,
+            onValueChange = { rate = it.toString() },
+            valueRange = 0f..100f,
+            modifier = Modifier.fillMaxWidth(),
+
+            )
         Button(onClick = {
-            val p = principal.toDoubleOrNull() ?: 0.0
-            val r = rate.toDoubleOrNull() ?: 0.0
-            val t = time.toDoubleOrNull() ?: 0.0
-            val interest = p * r * t / 100
-            val total = p + interest
-            result = Pair(interest, total)
+            if (principal.isBlank() || time.isBlank() || rate.isBlank()) {
+                error = true
+            } else {
+                val p = principal.toDoubleOrNull() ?: 0.0
+                val r = rate.toDoubleOrNull() ?: 0.0
+                val t = time.toDoubleOrNull() ?: 0.0
+                val interest = p * r * t / 100
+                val total = p + interest
+                result = Pair(interest, total)
+
+
+                error = false
+
+            }
         }, modifier = Modifier.padding(top = 12.dp)) {
             Text("Calculate")
         }
 
         result?.let { (interest, total) ->
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp), shape = MaterialTheme.shapes.large, elevation = CardDefaults.cardElevation(8.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                shape = MaterialTheme.shapes.large,
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Interest: ₹${"%.2f".format(interest)}", fontSize = 20.sp)
                     Spacer(Modifier.height(8.dp))
@@ -115,7 +165,6 @@ fun SimpleInterestCalculator() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompoundInterestCalculator() {
     var principal by remember { mutableStateOf("") }
@@ -130,28 +179,36 @@ fun CompoundInterestCalculator() {
             onValueChange = { principal = it },
             label = { Text("Principal (₹)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         )
         OutlinedTextField(
             value = rate,
             onValueChange = { rate = it },
             label = { Text("Rate (%)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         )
         OutlinedTextField(
             value = time,
             onValueChange = { time = it },
             label = { Text("Time (years)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         )
         OutlinedTextField(
             value = frequency,
             onValueChange = { frequency = it },
             label = { Text("Compounds per year") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         )
 
         Button(onClick = {
@@ -167,9 +224,13 @@ fun CompoundInterestCalculator() {
         }
 
         result?.let { (interest, total) ->
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp), shape = MaterialTheme.shapes.large, elevation = CardDefaults.cardElevation(8.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                shape = MaterialTheme.shapes.large,
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Interest: ₹${"%.2f".format(interest)}", fontSize = 20.sp)
                     Spacer(Modifier.height(8.dp))
