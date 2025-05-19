@@ -118,6 +118,7 @@ fun SimpleInterestCalculator(scrollState: ScrollState) {
             },
             label = { Text("Principal (₹)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true, 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -140,6 +141,7 @@ fun SimpleInterestCalculator(scrollState: ScrollState) {
             },
             label = { Text("Time (years)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true, 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -159,6 +161,7 @@ fun SimpleInterestCalculator(scrollState: ScrollState) {
             },
             label = { Text("Rate (%)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true, 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -268,6 +271,7 @@ fun CompoundInterestCalculator(scrollState: ScrollState) {
             },
             label = { Text("Principal (₹)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true, 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -289,6 +293,7 @@ fun CompoundInterestCalculator(scrollState: ScrollState) {
             },
             label = { Text("Time (years)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true, 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -307,6 +312,7 @@ fun CompoundInterestCalculator(scrollState: ScrollState) {
             },
             label = { Text("Compounds per year") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true, 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -329,6 +335,7 @@ fun CompoundInterestCalculator(scrollState: ScrollState) {
             },
             label = { Text("Annual Rate (%)") }, // More descriptive label
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true, 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
